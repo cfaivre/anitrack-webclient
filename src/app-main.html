@@ -1,0 +1,154 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="app-main">
+
+  <template>
+
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        background-color: #eeeeee;
+        display: block;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+    </style>
+
+    <app-drawer-layout fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer" hidden>
+        <app-toolbar>Menu</app-toolbar>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <!-- <paper-icon-button icon="iron-icons:menu" drawer-toggle></paper-icon-button> -->
+            <div main-title>AniTrack</div>
+          </app-toolbar>
+        </app-header>
+
+        <div id="content">
+          <video id="video" autoplay="autoplay"></video>
+          <canvas id="canvas" style="display:none;"></canvas>
+          <img id="image" src="">
+          <button on-tap="snapshot">Capture</button>
+          <input type="file" id="take-picture" accept="image/*">
+        </div>
+        
+      </app-header-layout>
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'app-main',
+
+      properties: {
+
+        stream: {
+          type: Object
+        },
+
+        location: {
+          type: Object
+        }
+
+      },
+
+      observers: [
+        
+      ],
+
+      listiners: {
+        
+      },
+
+      ready: function() {
+        this.getLocation();
+        var getSources = MediaDevices.enumerateDevices || MediaStreamTrack.getSources || null;
+        if (getSources !== null) {
+          getSources(this.selectSource.bind(this));
+        }
+      },
+
+      getLocation: function() {
+        if (!navigator.geolocation) return;
+        var options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        };
+        navigator.geolocation.getCurrentPosition(function(position) {
+          console.log(position);
+          this.location = position;
+        }.bind(this), null, options);
+      },
+
+      selectSource: function(sourceList) {
+        var videoSources = [];
+        for (var i = 0; i != sourceList.length; ++i) {
+          var source = sourceList[i];
+          if (source.kind === 'video') {
+            videoSources.push(source.id);
+          }
+        };
+        this.streamVideo(videoSources.pop());
+      },
+
+      streamVideo: function(videoSource) {
+        var options = {
+          video: { optional: [{ sourceId: videoSource }] }
+        };
+        var video = this.$$('#video');
+        navigator.getUserMedia(options, function(stream) {
+          this.stream = stream;
+          videoStream = stream;
+          video.src = window.URL.createObjectURL(stream);
+          video.play();
+        }.bind(this),
+        function(error) {
+          alert("Video capture error: " + error.name);
+        });
+      },
+
+      snapshot: function() {
+        if (this.stream) {
+          var video = this.$$('#video');
+          var canvas = this.$$('#canvas');
+          var image = this.$$('#image');
+          var context = canvas.getContext('2d');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          context.drawImage(video, 0, 0);
+          image.src = canvas.toDataURL('image/webp');
+        } else {
+          alert('no stream');
+        }
+      }
+
+    });
+  </script>
+</dom-module>

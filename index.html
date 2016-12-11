@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>AniTrack</title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="icon.png" sizes="256x256">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script>window.Polymer = { dom: 'shadow', lazyRegister: true };</script>
+  <link rel="import" href="bower_components/polymer/polymer.html">
+  <link rel="import" href="./src/app-main.html">
+  <style is="custom-style">
+    body {
+      font-family: Roboto, 'Noto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 400;
+      color: #424242;
+      line-height: 20px;
+      font-size: 13px;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    app-main {
+      /*display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;*/
+    }
+  </style>
+</head>
+<body>
+  <app-main></app-main>
+</body>
+</html>

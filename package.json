@@ -1,0 +1,13 @@
+{
+  "name": "anitrack-webclient",
+  "description": "",
+  "version": "0.0.1",
+  "main": "index.html",
+  "scripts": {
+    "start": "wc-server -p 8080 -s -n -o"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "wc-server": "git+ssh://git@gitlab.host-h.net:wc/wc-server.git#master"
+  }
+}
